@@ -12,6 +12,8 @@ public:
 	~television();
 	void setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);
 	void printData();
+	void write(string path, string path_col, vector<television>* arr);
+
 private:
 	string name_programm; //название программы
 	string leader; //ведущий
@@ -43,6 +45,8 @@ int main()
 	int count = 0;
 	int var_delete = 0;
 	auto it = arr.begin();
+	string path = "data.txt";
+	string path_colvo = "colvo.txt";
 	m.print_info();
 	while (exit == false)
 	{
@@ -82,6 +86,14 @@ int main()
 			cout << "Элемент удален" << endl;
 			break;
 		case 3:
+			if (arr.empty())
+			{
+				cout << "Вектор пустой" << endl;
+			}
+			else
+			{
+				t.write(path, path_colvo, &arr);
+			}
 			break;
 		case 4:
 			break;
@@ -167,6 +179,36 @@ void television::printData()
 	cout << "Время выхода в эфир : " << time_release << endl;
 	cout << "Продолжительность программы : " << duration << endl;
 	cout << "Рейтинг программы : " <<rating<< endl;
+}
+
+void television::write(string path, string path_col, vector<television>* arr)
+{
+	fstream file;
+	fstream file_col;
+	file.open(path, fstream::out | fstream::app);
+	file_col.open(path_col, fstream::out);
+	if (file.is_open() && file_col.is_open())
+	{
+		cout << "файл успешно открыт" << endl;
+		for (auto& el : *arr)
+		{
+			file << el.name_programm << "\n";
+			file << el.leader << "\n";
+			file << el.channel << "\n";
+			file << el.day_release << "\n";
+			file << el.time_release << "\n";
+			file << el.duration << "\n";
+			file << el.rating << "\n";
+		}
+		file_col.clear();
+		file_col << arr->size();
+		file.close();
+		file_col.close();
+	}
+	else
+	{
+		cout << "ошибка открытия файла" << endl;
+	}
 }
 
 void menu::print_info()
