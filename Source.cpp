@@ -13,7 +13,7 @@ public:
 	void setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);
 	void printData();
 	void write(string path, string path_col, vector<television>* arr);
-
+	void ride(string path, string path_col, vector<television>* arr);
 private:
 	string name_programm; //название программы
 	string leader; //ведущий
@@ -48,6 +48,7 @@ int main()
 	string path = "data.txt";
 	string path_colvo = "colvo.txt";
 	m.print_info();
+	t.ride(path, path_colvo, &arr);
 	while (exit == false)
 	{
 		cout << "выберите действие" << endl;
@@ -93,9 +94,18 @@ int main()
 			else
 			{
 				t.write(path, path_colvo, &arr);
+				cout << "Данные записаны в файл" << endl;
 			}
 			break;
 		case 4:
+			if (arr.empty())
+			{
+				cout << "Вектор пустой" << endl;
+			}
+			else
+			{
+				t.ride(path, path_colvo, &arr);
+			}
 			break;
 		case 5:
 			break;
@@ -112,7 +122,7 @@ int main()
 			{
 				for (auto& e : arr)
 				{
-					t.printData();
+					e.printData();
 				}
 			}
 			break;
@@ -204,6 +214,45 @@ void television::write(string path, string path_col, vector<television>* arr)
 		file_col << arr->size();
 		file.close();
 		file_col.close();
+	}
+	else
+	{
+		cout << "ошибка открытия файла" << endl;
+	}
+}
+
+void television::ride(string path, string path_col, vector<television>* arr)
+{
+	fstream file;
+	fstream file_col;
+	television tv;
+	string str;
+	int count = 0;
+	file.open(path, fstream::in);
+	file_col.open(path_col, fstream::in);
+	if (file.is_open() && file_col.is_open())
+	{
+		cout << "файл успешно открыт" << endl;
+		getline(file_col, str);
+		count = stoi(str);
+		for (int i = 0;i < count;i++)
+		{
+			getline(file, tv.name_programm);
+			getline(file, tv.leader);
+			getline(file, str);
+			tv.channel = stoi(str);
+			getline(file, tv.day_release);
+			getline(file, str);
+			tv.day_release = stoi(str);
+			getline(file, str);
+			tv.duration = stoi(str);
+			getline(file, str);
+			tv.rating = stoi(str);
+			arr->push_back(tv);
+			cout << "Данные успешно считаны из файла" << endl;
+			file.close();
+			file_col.close();
+		}
 	}
 	else
 	{
