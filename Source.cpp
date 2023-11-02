@@ -12,8 +12,10 @@ public:
 	~television();
 	void setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);
 	void printData();
-	void write(string path, string path_col, vector<television>* arr);
+	void write(string path, vector<television>* arr);
 	void ride(string path, string path_col, vector<television>* arr);
+	void read(string path, vector<television>* arr);
+	void search(vector<television>* arr, int var_search, string field);
 private:
 	string name_programm; //название программы
 	string leader; //ведущий
@@ -27,6 +29,8 @@ class menu
 {
 public:
 	void print_info();
+	void print_field();
+	void print_field_for_min();
 private:
 };
 int main()
@@ -44,11 +48,14 @@ int main()
 	bool exit = false;
 	int count = 0;
 	int var_delete = 0;
+	int var_search = 0;
+	int var_switch = 0;
 	auto it = arr.begin();
 	string path = "data.txt";
 	string path_colvo = "colvo.txt";
+	string field;
 	m.print_info();
-	t.ride(path, path_colvo, &arr);
+	t.read(path, &arr);
 	while (exit == false)
 	{
 		cout << "выберите действие" << endl;
@@ -93,23 +100,26 @@ int main()
 			}
 			else
 			{
-				t.write(path, path_colvo, &arr);
+				t.write(path,&arr);
 				cout << "Данные записаны в файл" << endl;
 			}
 			break;
 		case 4:
-			if (arr.empty())
-			{
-				cout << "Вектор пустой" << endl;
-			}
-			else
-			{
-				t.ride(path, path_colvo, &arr);
-			}
+			t.read(path, &arr);
 			break;
 		case 5:
-			break;
+			m.print_field();
+			cout << "Выберите поле для поиска" << endl;
+			cin >> var_search;
+			cout << "Введите данные для поиска" << endl;
+			cin >> field;
+			t.search(&arr, var_search, field);
 		case 6:
+			cout << "Что вы хотите найти?" << endl;
+			cout << "1 - Минимальное" << endl;
+			cout << "2 - Максимальное" << endl;
+			cin >> var_search;
+			m.print_field_for_min();
 			break;
 		case 7:
 			break;
@@ -191,33 +201,31 @@ void television::printData()
 	cout << "Рейтинг программы : " <<rating<< endl;
 }
 
-void television::write(string path, string path_col, vector<television>* arr)
+
+void television::write(string path, vector<television>* arr)
 {
 	fstream file;
-	fstream file_col;
-	file.open(path, fstream::out | fstream::app);
-	file_col.open(path_col, fstream::out);
-	if (file.is_open() && file_col.is_open())
+	file.open(path, fstream::out);
+	if (file.is_open())
 	{
-		cout << "файл успешно открыт" << endl;
-		for (auto& el : *arr)
+		cout << "Файл успешно открыт" << endl;
+		file << arr->size() << "\n";
+		for (auto& e : *arr)
 		{
-			file << el.name_programm << "\n";
-			file << el.leader << "\n";
-			file << el.channel << "\n";
-			file << el.day_release << "\n";
-			file << el.time_release << "\n";
-			file << el.duration << "\n";
-			file << el.rating << "\n";
+			file << e.name_programm << "\n";
+			file << e.leader << "\n";
+			file << e.channel << "\n";
+			file << e.day_release << "\n";
+			file << e.time_release << "\n";
+			file << e.duration << "\n";
+			file << e.rating << "\n";
 		}
-		file_col.clear();
-		file_col << arr->size();
+		cout << "Данные успешно записаны" << endl;
 		file.close();
-		file_col.close();
 	}
 	else
 	{
-		cout << "ошибка открытия файла" << endl;
+		cout << "Ошибка открытия файла" << endl;
 	}
 }
 
@@ -260,6 +268,95 @@ void television::ride(string path, string path_col, vector<television>* arr)
 	}
 }
 
+void television::read(string path, vector<television>* arr)
+{
+	fstream file;
+	string str;
+	television tv;
+	int size = 0;
+	file.open(path, fstream::in);
+	if (file.is_open())
+	{
+		cout << "Файл успешно открыт" << endl;
+		getline(file, str);
+		size = stoi(str);
+		for (int i = 0;i < size;i++)
+		{
+			getline(file, tv.name_programm);
+			getline(file, tv.leader);
+			getline(file, str);
+			tv.channel = stoi(str);
+			getline(file, tv.day_release);
+			getline(file, str);
+			tv.day_release = stoi(str);
+			getline(file, str);
+			tv.duration = stoi(str);
+			getline(file, str);
+			tv.rating = stoi(str);
+			arr->push_back(tv);
+		}
+		file.close();
+	}
+	else
+	{
+		cout << "Ошибка открытия файла" << endl;
+	}
+}
+
+void television::search(vector<television>* arr, int var_search, string field)
+{
+	for (auto& e : *arr)
+	{
+		switch (var_search)
+		{
+		case 1:
+			if (e.name_programm == field)
+			{
+				e.printData();
+			}
+			break;
+		case 2:
+			if (e.leader == field)
+			{
+				e.printData();
+			}
+			break;
+		case 3:
+			if (e.channel == stoi(field))
+			{
+				e.printData();
+			}
+			break;
+		case 4:
+			if (e.day_release == field)
+			{
+				e.printData();
+			}
+			break;
+		case 5:
+			if (e.time_release == stoi(field))
+			{
+				e.printData();
+			}
+			break;
+		case 6:
+			if (e.duration == stoi(field))
+			{
+				e.printData();
+			}
+			break;
+		case 7:
+			if (e.rating == stoi(field))
+			{
+				e.printData();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void menu::print_info()
 {
 	cout << "Список всех действий" << endl;
@@ -272,4 +369,25 @@ void menu::print_info()
 	cout << "7 - Cортировка по полям объекта" << endl;
 	cout << "8 - Вывод всех данных объекта" << endl;
 	cout << "9 - Выход из программы" << endl;
+}
+
+void menu::print_field()
+{
+	cout << "Доступные поля :" << endl;
+	cout << "1 - Название программы" << endl;
+	cout << "2 - Ведущий" << endl;
+	cout << "3 - Канал" << endl;
+	cout << "4 - День выхода в эфир" << endl;
+	cout << "5 - Время выхода в эфир" << endl;
+	cout << "6 - Длительность программы" << endl;
+	cout << "7 - Рейтинг программы" << endl;
+}
+
+void menu::print_field_for_min()
+{
+	cout << "Доступные поля :" << endl;
+	cout << "1 - Канал" << endl;
+	cout << "2 - Время выхода в эфир" << endl;
+	cout << "3 - Длительность программы" << endl;
+	cout << "4 - Рейтинг программы" << endl;
 }
