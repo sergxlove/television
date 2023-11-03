@@ -16,6 +16,7 @@ public:
 	void ride(string path, string path_col, vector<television>* arr);
 	void read(string path, vector<television>* arr);
 	void search(vector<television>* arr, int var_search, string field);
+	void sort_field(vector<television>* arr, int var_sort);
 private:
 	string name_programm; //название программы
 	string leader; //ведущий
@@ -50,6 +51,7 @@ int main()
 	int var_delete = 0;
 	int var_search = 0;
 	int var_switch = 0;
+	int var_sort = 0;
 	auto it = arr.begin();
 	string path = "data.txt";
 	string path_colvo = "colvo.txt";
@@ -122,6 +124,9 @@ int main()
 			m.print_field_for_min();
 			break;
 		case 7:
+			cout << "Выберите поле для сортировки" << endl;
+			cin >> var_sort;
+			t.sort_field(&arr, var_sort);
 			break;
 		case 8:
 			if (arr.empty())
@@ -354,6 +359,36 @@ void television::search(vector<television>* arr, int var_search, string field)
 		default:
 			break;
 		}
+	}
+}
+
+void television::sort_field(vector<television>* arr, int var_sort)
+{
+	switch (var_sort)
+	{
+	case 1:
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.name_programm > t2.name_programm;});
+		break;
+	case 2:
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.leader > t2.leader;});
+		break;
+	case 3:
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.channel > t2.channel;});
+		break;
+	case 4:
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.day_release > t2.day_release;});
+		break;
+	case 5:
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.time_release > t2.time_release;});
+		break;
+	case 6:
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.duration > t2.duration;});
+		break;
+	case 7:
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.rating > t2.rating;});
+		break;
+	default:
+		break;
 	}
 }
 
