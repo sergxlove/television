@@ -7,16 +7,15 @@ using namespace std;
 class television
 {
 public:
-	television();
-	television(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);
-	~television();
-	void setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);
-	void printData();
-	void write(string path, vector<television>* arr);
-	void ride(string path, string path_col, vector<television>* arr);
-	void read(string path, vector<television>* arr);
-	void search(vector<television>* arr, int var_search, string field);
-	void sort_field(vector<television>* arr, int var_sort);
+	television();//конструктор
+	television(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);//конструктор с параметрами
+	~television();//деструктор
+	void setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);//ввод данных
+	void printData();//вывод данных
+	void write(string path, vector<television>* arr);//запись в файл
+	void read(string path, vector<television>* arr);//чтение из файла
+	void search(vector<television>* arr, int var_search, string field);//поиск поля
+	void sort_field(vector<television>* arr, int var_sort);//сортировка по полю
 private:
 	string name_programm; //название программы
 	string leader; //ведущий
@@ -29,9 +28,9 @@ private:
 class menu
 {
 public:
-	void print_info();
-	void print_field();
-	void print_field_for_min();
+	void print_info();//вывод доступных действий
+	void print_field();//вывод доступных полей
+	void print_field_for_min();//вывод полей для максимума и минимума
 private:
 };
 int main()
@@ -54,7 +53,6 @@ int main()
 	int var_sort = 0;
 	auto it = arr.begin();
 	string path = "data.txt";
-	string path_colvo = "colvo.txt";
 	string field;
 	m.print_info();
 	t.read(path, &arr);
@@ -150,7 +148,6 @@ int main()
 	}
 	return 0;
 }
-
 television::television()
 {
 	this->name_programm = "";
@@ -161,7 +158,6 @@ television::television()
 	this->duration = 0.0f;
 	this->rating = 0.0f;
 }
-
 television::television(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating)
 {
 	this->name_programm = name_programm;
@@ -172,7 +168,6 @@ television::television(string name_programm, string leader, int channel, string 
 	this->duration = duration;
 	this->rating = rating;
 }
-
 television::~television()
 {
 	this->name_programm = "";
@@ -183,7 +178,6 @@ television::~television()
 	this->duration = 0.0f;
 	this->rating = 0.0f;
 }
-
 void television::setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating)
 {
 	this->name_programm = name_programm;
@@ -194,7 +188,6 @@ void television::setData(string name_programm, string leader, int channel, strin
 	this->duration = duration;
 	this->rating = rating;
 }
-
 void television::printData()
 {
 	cout << "Название программы : " << name_programm << endl;
@@ -205,8 +198,6 @@ void television::printData()
 	cout << "Продолжительность программы : " << duration << endl;
 	cout << "Рейтинг программы : " <<rating<< endl;
 }
-
-
 void television::write(string path, vector<television>* arr)
 {
 	fstream file;
@@ -233,46 +224,6 @@ void television::write(string path, vector<television>* arr)
 		cout << "Ошибка открытия файла" << endl;
 	}
 }
-
-void television::ride(string path, string path_col, vector<television>* arr)
-{
-	fstream file;
-	fstream file_col;
-	television tv;
-	string str;
-	int count = 0;
-	file.open(path, fstream::in);
-	file_col.open(path_col, fstream::in);
-	if (file.is_open() && file_col.is_open())
-	{
-		cout << "файл успешно открыт" << endl;
-		getline(file_col, str);
-		count = stoi(str);
-		for (int i = 0;i < count;i++)
-		{
-			getline(file, tv.name_programm);
-			getline(file, tv.leader);
-			getline(file, str);
-			tv.channel = stoi(str);
-			getline(file, tv.day_release);
-			getline(file, str);
-			tv.day_release = stoi(str);
-			getline(file, str);
-			tv.duration = stoi(str);
-			getline(file, str);
-			tv.rating = stoi(str);
-			arr->push_back(tv);
-			cout << "Данные успешно считаны из файла" << endl;
-			file.close();
-			file_col.close();
-		}
-	}
-	else
-	{
-		cout << "ошибка открытия файла" << endl;
-	}
-}
-
 void television::read(string path, vector<television>* arr)
 {
 	fstream file;
@@ -307,7 +258,6 @@ void television::read(string path, vector<television>* arr)
 		cout << "Ошибка открытия файла" << endl;
 	}
 }
-
 void television::search(vector<television>* arr, int var_search, string field)
 {
 	for (auto& e : *arr)
@@ -361,7 +311,6 @@ void television::search(vector<television>* arr, int var_search, string field)
 		}
 	}
 }
-
 void television::sort_field(vector<television>* arr, int var_sort)
 {
 	switch (var_sort)
@@ -391,7 +340,6 @@ void television::sort_field(vector<television>* arr, int var_sort)
 		break;
 	}
 }
-
 void menu::print_info()
 {
 	cout << "Список всех действий" << endl;
@@ -405,7 +353,6 @@ void menu::print_info()
 	cout << "8 - Вывод всех данных объекта" << endl;
 	cout << "9 - Выход из программы" << endl;
 }
-
 void menu::print_field()
 {
 	cout << "Доступные поля :" << endl;
@@ -417,7 +364,6 @@ void menu::print_field()
 	cout << "6 - Длительность программы" << endl;
 	cout << "7 - Рейтинг программы" << endl;
 }
-
 void menu::print_field_for_min()
 {
 	cout << "Доступные поля :" << endl;
