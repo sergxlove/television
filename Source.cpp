@@ -16,6 +16,7 @@ public:
 	void read(string path, vector<television>* arr);//чтение из файла
 	void search(vector<television>* arr, int var_search, string field);//поиск поля
 	void sort_field(vector<television>* arr, int var_sort);//сортировка по полю
+	float find_maxmin(vector<television>* arr, int var_search, int var_sort);
 private:
 	string name_programm; //название программы
 	string leader; //ведущий
@@ -44,13 +45,9 @@ int main()
 	time_release = duration = rating = 0.0f;
 	int chanel = 0;
 	vector<television> arr;
-	int var = 0;
+	int var, count, var_delete, var_search, var_sort;
+	var = count = var_delete = var_search = var_sort = 0;
 	bool exit = false;
-	int count = 0;
-	int var_delete = 0;
-	int var_search = 0;
-	int var_switch = 0;
-	int var_sort = 0;
 	auto it = arr.begin();
 	string path = "data.txt";
 	string field;
@@ -81,17 +78,24 @@ int main()
 			arr.push_back(t);
 			break;
 		case 2:
-			count = 0;
-			for (auto& e : arr)
+			if (arr.empty())
 			{
-				cout << "Номер объекта - " <<count<< endl;
+				cout << "Вектор пустой" << endl;
 			}
-			cout << "Какой элемент удалить?" << endl;
-			cin >> var_delete;
-			it = arr.begin();
-			advance(it, var_delete);
-			arr.erase(it);
-			cout << "Элемент удален" << endl;
+			else
+			{
+				count = 0;
+				for (auto& e : arr)
+				{
+					cout << "Номер объекта - " <<count<< endl;
+				}
+				cout << "Какой элемент удалить?" << endl;
+				cin >> var_delete;
+				it = arr.begin();
+				advance(it, var_delete);
+				arr.erase(it);
+				cout << "Элемент удален" << endl;
+			}
 			break;
 		case 3:
 			if (arr.empty())
@@ -108,23 +112,46 @@ int main()
 			t.read(path, &arr);
 			break;
 		case 5:
-			m.print_field();
-			cout << "Выберите поле для поиска" << endl;
-			cin >> var_search;
-			cout << "Введите данные для поиска" << endl;
-			cin >> field;
-			t.search(&arr, var_search, field);
+			if (arr.empty())
+			{
+				cout << "Вектор пустой" << endl;
+			}
+			else
+			{
+				m.print_field();
+				cout << "Выберите поле для поиска" << endl;
+				cin >> var_search;
+				cout << "Введите данные для поиска" << endl;
+				cin >> field;
+				t.search(&arr, var_search, field);
+			}
 		case 6:
-			cout << "Что вы хотите найти?" << endl;
-			cout << "1 - Минимальное" << endl;
-			cout << "2 - Максимальное" << endl;
-			cin >> var_search;
-			m.print_field_for_min();
+			if (arr.empty())
+			{
+				cout << "Вектор пустой" << endl;
+			}
+			else
+			{
+				cout << "Что вы хотите найти?" << endl;
+				cout << "1 - Минимальное" << endl;
+				cout << "2 - Максимальное" << endl;
+				cin >> var_search;
+				m.print_field_for_min();
+				cin >> var_sort;
+				cout << "результат : " << t.find_maxmin(&arr, var_search, var_sort) << endl;
+			}
 			break;
 		case 7:
-			cout << "Выберите поле для сортировки" << endl;
-			cin >> var_sort;
-			t.sort_field(&arr, var_sort);
+			if (arr.empty())
+			{
+				cout << "Вектор пустой" << endl;
+			}
+			else
+			{
+				cout << "Выберите поле для сортировки" << endl;
+				cin >> var_sort;
+				t.sort_field(&arr, var_sort);
+			}
 			break;
 		case 8:
 			if (arr.empty())
@@ -141,6 +168,7 @@ int main()
 			break;
 		case 9:
 			exit = true;
+			cout << "Программа завершенна" << endl;
 			break;
 		default:
 			break;
@@ -204,7 +232,6 @@ void television::write(string path, vector<television>* arr)
 	file.open(path, fstream::out);
 	if (file.is_open())
 	{
-		cout << "Файл успешно открыт" << endl;
 		file << arr->size() << "\n";
 		for (auto& e : *arr)
 		{
@@ -219,10 +246,6 @@ void television::write(string path, vector<television>* arr)
 		cout << "Данные успешно записаны" << endl;
 		file.close();
 	}
-	else
-	{
-		cout << "Ошибка открытия файла" << endl;
-	}
 }
 void television::read(string path, vector<television>* arr)
 {
@@ -233,7 +256,6 @@ void television::read(string path, vector<television>* arr)
 	file.open(path, fstream::in);
 	if (file.is_open())
 	{
-		cout << "Файл успешно открыт" << endl;
 		getline(file, str);
 		size = stoi(str);
 		for (int i = 0;i < size;i++)
@@ -252,10 +274,6 @@ void television::read(string path, vector<television>* arr)
 			arr->push_back(tv);
 		}
 		file.close();
-	}
-	else
-	{
-		cout << "Ошибка открытия файла" << endl;
 	}
 }
 void television::search(vector<television>* arr, int var_search, string field)
@@ -339,6 +357,117 @@ void television::sort_field(vector<television>* arr, int var_sort)
 	default:
 		break;
 	}
+}
+float television::find_maxmin(vector<television>* arr, int var_search, int var_sort)
+{
+	float max = 0.0f;
+	float min = 1000000.0f;
+	switch (var_search)
+	{
+	case 1:
+		switch (var_sort)
+		{
+		case 1:
+			for (auto& el : *arr)
+			{
+				if (el.channel >max)
+				{
+					max = el.channel;
+				}
+			}
+			return max;
+			break;
+		case 2:
+			for (auto& el : *arr)
+			{
+				if (el.time_release > max)
+				{
+					max = el.time_release;
+				}
+			}
+			return max;
+			break;
+		case 3:
+			for (auto& el : *arr)
+			{
+				if (el.duration >max)
+				{
+					max = el.duration;
+				}
+			}
+			return max;
+			break;
+		case 4:
+			for (auto& el : *arr)
+			{
+				if (el.rating > max)
+				{
+					max = el.rating;
+				}
+			}
+			return max;
+			break;
+		default:
+			cout << "Неверный ввод" << endl;
+			return 0.0f;
+			break;
+		}
+		break;
+	case 2:
+		switch (var_sort)
+		{
+		case 1:
+			for (auto& el : *arr)
+			{
+				if (el.channel < min)
+				{
+					min = el.channel;
+				}
+			}
+			return min;
+			break;
+		case 2:
+			for (auto& el : *arr)
+			{
+				if (el.time_release < min)
+				{
+					min = el.time_release;
+				}
+			}
+			return min;
+			break;
+		case 3:
+			for (auto& el : *arr)
+			{
+				if (el.duration < min)
+				{
+					min = el.duration;
+				}
+			}
+			return min;
+			break;
+		case 4:
+			for (auto& el : *arr)
+			{
+				if (el.rating < min)
+				{
+					min = el.rating;
+				}
+			}
+			return min;
+			break;
+		default:
+			cout << "Неверный ввод" << endl;
+			return 0.0f;
+			break;
+		}
+		break;
+	default:
+		cout << "Неверный ввод" << endl;
+		return 0.0f;
+		break;
+	}
+	return 0.0f;
 }
 void menu::print_info()
 {
