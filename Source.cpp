@@ -66,7 +66,7 @@ int main()
 			cin >> leader;
 			cout << "Введите номер канала" << endl;
 			cin >> chanel;
-			cout << "Введите день ввыхода в эфир" << endl;
+			cout << "Введите день выхода в эфир" << endl;
 			cin >> day_release;
 			cout << "Введите время выхода в эфир" << endl;
 			cin >> time_release;
@@ -76,6 +76,7 @@ int main()
 			cin >> rating;
 			t.setData(name_programm, leader, chanel, day_release, time_release, duration, rating);
 			arr.push_back(t);
+			cout << "Объект создан" << endl;
 			break;
 		case 2:
 			if (arr.empty())
@@ -84,10 +85,11 @@ int main()
 			}
 			else
 			{
-				count = 0;
+				count=0;
 				for (auto& e : arr)
 				{
 					cout << "Номер объекта - " <<count<< endl;
+					count++;
 				}
 				cout << "Какой элемент удалить?" << endl;
 				cin >> var_delete;
