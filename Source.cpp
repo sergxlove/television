@@ -112,6 +112,7 @@ int main()
 			break;
 		case 4:
 			t.read(path, &arr);
+			cout << "Данные успешно считаны из файла" << endl;
 			break;
 		case 5:
 			if (arr.empty())
@@ -127,6 +128,7 @@ int main()
 				cin >> field;
 				t.search(&arr, var_search, field);
 			}
+			break;
 		case 6:
 			if (arr.empty())
 			{
@@ -135,8 +137,8 @@ int main()
 			else
 			{
 				cout << "Что вы хотите найти?" << endl;
-				cout << "1 - Минимальное" << endl;
-				cout << "2 - Максимальное" << endl;
+				cout << "1 - Максимальное" << endl;
+				cout << "2 - Минимальноое" << endl;
 				cin >> var_search;
 				m.print_field_for_min();
 				cin >> var_sort;
@@ -151,8 +153,10 @@ int main()
 			else
 			{
 				cout << "Выберите поле для сортировки" << endl;
+				m.print_field();
 				cin >> var_sort;
 				t.sort_field(&arr, var_sort);
+				cout << "Сортировка прошла успешно" << endl;
 			}
 			break;
 		case 8:
@@ -173,6 +177,7 @@ int main()
 			cout << "Программа завершенна" << endl;
 			break;
 		default:
+			cout << "Неверный ввод" << endl;
 			break;
 		}
 	}
@@ -245,7 +250,6 @@ void television::write(string path, vector<television>* arr)
 			file << e.duration << "\n";
 			file << e.rating << "\n";
 		}
-		cout << "Данные успешно записаны" << endl;
 		file.close();
 	}
 }
@@ -327,6 +331,7 @@ void television::search(vector<television>* arr, int var_search, string field)
 			}
 			break;
 		default:
+			cout << "Данные не найдены" << endl;
 			break;
 		}
 	}
