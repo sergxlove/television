@@ -3,6 +3,7 @@
 #include <fstream>
 #include <algorithm>
 #include <vector>
+
 using namespace std;
 class television
 {
@@ -10,13 +11,13 @@ public:
 	television();//конструктор
 	television(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);//конструктор с параметрами
 	~television();//деструктор
-	void setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating);//ввод данных
+	void setData();//ввод данных
 	void printData();//вывод данных
 	void write(string path, vector<television>* arr);//запись в файл
 	void read(string path, vector<television>* arr);//чтение из файла
 	void search(vector<television>* arr, int var_search, string field);//поиск поля
 	void sort_field(vector<television>* arr, int var_sort);//сортировка по полю
-	float find_maxmin(vector<television>* arr, int var_search, int var_sort);
+	float find_maxmin(vector<television>* arr, int var_search, int var_sort);//поиск максимального или минимального элемента
 private:
 	string name_programm; //название программы
 	string leader; //ведущий
@@ -37,14 +38,10 @@ private:
 int main()
 {
 	setlocale(LC_ALL, "rus");
+	//создание объектов класса
 	menu m;
 	television t;
-	//переменные для ввода данных
-	string name_programm, leader, day_release;
-	float time_release, duration, rating;
-	time_release = duration = rating = 0.0f;
-	int chanel = 0;
-	vector<television> arr;
+	vector<television> arr;//создание массива объектов
 	int var, count, var_delete, var_search, var_sort;
 	var = count = var_delete = var_search = var_sort = 0;
 	bool exit = false;
@@ -57,80 +54,74 @@ int main()
 	{
 		cout << "выберите действие" << endl;
 		cin >> var;
-		switch (var)
+		switch (var)//консольное меню
 		{
-		case 1:
-			cout << "Введите название программы" << endl;
-			cin >> name_programm;
-			cout << "Введите фамилию ведущего" << endl;
-			cin >> leader;
-			cout << "Введите номер канала" << endl;
-			cin >> chanel;
-			cout << "Введите день выхода в эфир" << endl;
-			cin >> day_release;
-			cout << "Введите время выхода в эфир" << endl;
-			cin >> time_release;
-			cout << "Введите длительность программы" << endl;
-			cin >> duration;
-			cout << "Введите рейтинг программы" << endl;
-			cin >> rating;
-			t.setData(name_programm, leader, chanel, day_release, time_release, duration, rating);
-			arr.push_back(t);
+		case 1://режим 1
+			//ввод данных
+			t.setData();//передача параметров в поля объекта
+			arr.push_back(t);//добавление объекта в вектор
 			cout << "Объект создан" << endl;
 			break;
-		case 2:
-			if (arr.empty())
+		case 2://режим 2
+			if (arr.empty())//проверка на наличие элементов в векторе
 			{
 				cout << "Вектор пустой" << endl;
 			}
 			else
 			{
 				count=0;
-				for (auto& e : arr)
+				for (auto& e : arr)//вывод доступных номеров лбъекта с помощью цикла форич
 				{
 					cout << "Номер объекта - " <<count<< endl;
 					count++;
 				}
 				cout << "Какой элемент удалить?" << endl;
 				cin >> var_delete;
-				it = arr.begin();
-				advance(it, var_delete);
-				arr.erase(it);
-				cout << "Элемент удален" << endl;
+				if (var_delete < arr.size())//проверка корректности введенных данных
+				{
+					it = arr.begin();//присвоение итератору ссылки на первый элемент вектора
+					advance(it, var_delete);//сдвиг итератора
+					arr.erase(it);//удаление элемента
+					cout << "Элемент удален" << endl;
+				}
+				else
+				{
+					cout << "Такого элеемнта нет" << endl;
+				}
 			}
 			break;
-		case 3:
-			if (arr.empty())
+		case 3://режим 3
+			if (arr.empty())//проверка на наличие элементов в векторе
 			{
 				cout << "Вектор пустой" << endl;
 			}
 			else
 			{
-				t.write(path,&arr);
+				t.write(path,&arr);//запись данных в файл
 				cout << "Данные записаны в файл" << endl;
 			}
 			break;
-		case 4:
-			t.read(path, &arr);
+		case 4://режим 4
+			t.read(path, &arr);//чтение данных из файла
 			cout << "Данные успешно считаны из файла" << endl;
 			break;
-		case 5:
-			if (arr.empty())
+		case 5://режим 5
+			if (arr.empty())//проверка на наличие элементов в векторе
 			{
 				cout << "Вектор пустой" << endl;
 			}
 			else
 			{
-				m.print_field();
+				m.print_field();//вывод доступных полей
 				cout << "Выберите поле для поиска" << endl;
 				cin >> var_search;
 				cout << "Введите данные для поиска" << endl;
 				cin >> field;
-				t.search(&arr, var_search, field);
+				t.search(&arr, var_search, field);//поиск данных по полю
 			}
 			break;
-		case 6:
-			if (arr.empty())
+		case 6://режим 6
+			if (arr.empty())//проверка на наличие элементов в векторе
 			{
 				cout << "Вектор пустой" << endl;
 			}
@@ -140,50 +131,72 @@ int main()
 				cout << "1 - Максимальное" << endl;
 				cout << "2 - Минимальноое" << endl;
 				cin >> var_search;
-				m.print_field_for_min();
+				m.print_field_for_min();//вывод полей доступных для поиска макс и мин
 				cin >> var_sort;
-				cout << "результат : " << t.find_maxmin(&arr, var_search, var_sort) << endl;
+				cout << "результат : " << t.find_maxmin(&arr, var_search, var_sort) << endl;//поиск и вывод макс или мин элемента
 			}
 			break;
-		case 7:
-			if (arr.empty())
+		case 7://режим 7
+			if (arr.empty())//проверка на наличие элементов в векторе
 			{
 				cout << "Вектор пустой" << endl;
 			}
 			else
 			{
 				cout << "Выберите поле для сортировки" << endl;
-				m.print_field();
+				m.print_field();//вывод полей
 				cin >> var_sort;
-				t.sort_field(&arr, var_sort);
+				t.sort_field(&arr, var_sort);//сортировка поля
 				cout << "Сортировка прошла успешно" << endl;
 			}
 			break;
-		case 8:
-			if (arr.empty())
+		case 8://режим 8
+			if (arr.empty())//проверка на наличие элементов в векторе
 			{
 				cout << "Вектор пустой" << endl;
 			}
 			else
 			{
-				for (auto& e : arr)
+				for (auto& e : arr)//цикл фор ич
 				{
 					e.printData();
 				}
 			}
 			break;
-		case 9:
-			exit = true;
+		case 9://режим 9
+			exit = true;//выход из программы
 			cout << "Программа завершенна" << endl;
 			break;
-		default:
+		default://при неверном вводе
 			cout << "Неверный ввод" << endl;
 			break;
 		}
 	}
 	return 0;
 }
-television::television()
+television::television()//конструктор
+{
+	//заполнение полей объекта значениями
+	this->name_programm = "";
+	this->leader = "";
+	this->channel = 0;
+	this->day_release = "";
+	this->time_release = 0.0f;
+	this->duration = 0.0f;
+	this->rating = 0.0f;
+}
+television::television(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating)//конструктор с параметрами
+{
+	//заполнение полей объекта значениями
+	this->name_programm = name_programm;
+	this->leader = leader;
+	this->channel = channel;
+	this->day_release = day_release;
+	this->time_release = time_release;
+	this->duration = duration;
+	this->rating = rating;
+}
+television::~television()//деструктор
 {
 	this->name_programm = "";
 	this->leader = "";
@@ -193,37 +206,25 @@ television::television()
 	this->duration = 0.0f;
 	this->rating = 0.0f;
 }
-television::television(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating)
+void television::setData()//ввод данных
 {
-	this->name_programm = name_programm;
-	this->leader = leader;
-	this->channel = channel;
-	this->day_release = day_release;
-	this->time_release = time_release;
-	this->duration = duration;
-	this->rating = rating;
+	//заполнение полей объекта значениями
+	cout << "Введите название программы" << endl;
+	cin >> name_programm;
+	cout << "Введите фамилию ведущего" << endl;
+	cin >> leader;
+	cout << "Введите номер канала" << endl;
+	cin >> channel;
+	cout << "Введите день выхода в эфир" << endl;
+	cin >> day_release;
+	cout << "Введите время выхода в эфир" << endl;
+	cin >> time_release;
+	cout << "Введите длительность программы" << endl;
+	cin >> duration;
+	cout << "Введите рейтинг программы" << endl;
+	cin >> rating;
 }
-television::~television()
-{
-	this->name_programm = "";
-	this->leader = "";
-	this->channel = 0;
-	this->day_release = "";
-	this->time_release = 0.0f;
-	this->duration = 0.0f;
-	this->rating = 0.0f;
-}
-void television::setData(string name_programm, string leader, int channel, string day_release, float time_release, float duration, float rating)
-{
-	this->name_programm = name_programm;
-	this->leader = leader;
-	this->channel = channel;
-	this->day_release = day_release;
-	this->time_release = time_release;
-	this->duration = duration;
-	this->rating = rating;
-}
-void television::printData()
+void television::printData()//вывод данных
 {
 	cout << "Название программы : " << name_programm << endl;
 	cout << "Фамилия лидера : " << leader << endl;
@@ -233,15 +234,16 @@ void television::printData()
 	cout << "Продолжительность программы : " << duration << endl;
 	cout << "Рейтинг программы : " <<rating<< endl;
 }
-void television::write(string path, vector<television>* arr)
+void television::write(string path, vector<television>* arr)//запись в файл
 {
 	fstream file;
-	file.open(path, fstream::out);
-	if (file.is_open())
+	file.open(path, fstream::out);//открытие файла
+	if (file.is_open())//проверка открытия файла
 	{
 		file << arr->size() << "\n";
-		for (auto& e : *arr)
+		for (auto& e : *arr)//цикл фор ич
 		{
+			//запись в файл
 			file << e.name_programm << "\n";
 			file << e.leader << "\n";
 			file << e.channel << "\n";
@@ -250,22 +252,24 @@ void television::write(string path, vector<television>* arr)
 			file << e.duration << "\n";
 			file << e.rating << "\n";
 		}
-		file.close();
+		file.close();//заакрытие файла
 	}
 }
-void television::read(string path, vector<television>* arr)
+void television::read(string path, vector<television>* arr)//чтение из файла
 {
 	fstream file;
 	string str;
 	television tv;
 	int size = 0;
-	file.open(path, fstream::in);
+	file.open(path, fstream::in);//открытие файла
 	if (file.is_open())
 	{
 		getline(file, str);
 		size = stoi(str);
 		for (int i = 0;i < size;i++)
 		{
+			//считывание строк из файла
+			//stoi - конвертация символоов к цифрам
 			getline(file, tv.name_programm);
 			getline(file, tv.leader);
 			getline(file, str);
@@ -277,55 +281,55 @@ void television::read(string path, vector<television>* arr)
 			tv.duration = stoi(str);
 			getline(file, str);
 			tv.rating = stoi(str);
-			arr->push_back(tv);
+			arr->push_back(tv);//добавление в вектор
 		}
-		file.close();
+		file.close();//закрытие файла
 	}
 }
-void television::search(vector<television>* arr, int var_search, string field)
+void television::search(vector<television>* arr, int var_search, string field)//поиск данных
 {
 	for (auto& e : *arr)
 	{
-		switch (var_search)
+		switch (var_search)//поле
 		{
 		case 1:
-			if (e.name_programm == field)
+			if (e.name_programm == field)//сравнение поля объекта с введенными даннными
 			{
 				e.printData();
 			}
 			break;
 		case 2:
-			if (e.leader == field)
+			if (e.leader == field)//сравнение поля объекта с введенными даннными
 			{
 				e.printData();
 			}
 			break;
 		case 3:
-			if (e.channel == stoi(field))
+			if (e.channel == stoi(field))//сравнение поля объекта с введенными даннными
 			{
 				e.printData();
 			}
 			break;
 		case 4:
-			if (e.day_release == field)
+			if (e.day_release == field)//сравнение поля объекта с введенными даннными
 			{
 				e.printData();
 			}
 			break;
 		case 5:
-			if (e.time_release == stoi(field))
+			if (e.time_release == stoi(field))//сравнение поля объекта с введенными даннными
 			{
 				e.printData();
 			}
 			break;
 		case 6:
-			if (e.duration == stoi(field))
+			if (e.duration == stoi(field))//сравнение поля объекта с введенными даннными
 			{
 				e.printData();
 			}
 			break;
 		case 7:
-			if (e.rating == stoi(field))
+			if (e.rating == stoi(field))//сравнение поля объекта с введенными даннными
 			{
 				e.printData();
 			}
@@ -336,43 +340,43 @@ void television::search(vector<television>* arr, int var_search, string field)
 		}
 	}
 }
-void television::sort_field(vector<television>* arr, int var_sort)
+void television::sort_field(vector<television>* arr, int var_sort)//сортировка поля
 {
-	switch (var_sort)
+	switch (var_sort)//поле
 	{
 	case 1:
-		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.name_programm > t2.name_programm;});
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.name_programm > t2.name_programm;});//сортировка
 		break;
 	case 2:
-		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.leader > t2.leader;});
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.leader > t2.leader;});//сортировка
 		break;
 	case 3:
-		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.channel > t2.channel;});
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.channel > t2.channel;});//сортировка
 		break;
 	case 4:
-		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.day_release > t2.day_release;});
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.day_release > t2.day_release;});//сортировка
 		break;
 	case 5:
-		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.time_release > t2.time_release;});
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.time_release > t2.time_release;});//сортировка
 		break;
 	case 6:
-		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.duration > t2.duration;});
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.duration > t2.duration;});//сортировка
 		break;
 	case 7:
-		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.rating > t2.rating;});
+		sort(arr->begin(), arr->end(), [](const television& t1, const television& t2) {return t1.rating > t2.rating;});//сортировка
 		break;
 	default:
 		break;
 	}
 }
-float television::find_maxmin(vector<television>* arr, int var_search, int var_sort)
+float television::find_maxmin(vector<television>* arr, int var_search, int var_sort)//поиск макс или мин
 {
 	float max = 0.0f;
 	float min = 1000000.0f;
-	switch (var_search)
+	switch (var_search)//мин или макс
 	{
 	case 1:
-		switch (var_sort)
+		switch (var_sort)//поле
 		{
 		case 1:
 			for (auto& el : *arr)
@@ -476,7 +480,7 @@ float television::find_maxmin(vector<television>* arr, int var_search, int var_s
 	}
 	return 0.0f;
 }
-void menu::print_info()
+void menu::print_info()//вывод информации о консольном меню
 {
 	cout << "Список всех действий" << endl;
 	cout << "1 - Ввод данных в коллекцию" << endl;
@@ -489,7 +493,7 @@ void menu::print_info()
 	cout << "8 - Вывод всех данных объекта" << endl;
 	cout << "9 - Выход из программы" << endl;
 }
-void menu::print_field()
+void menu::print_field()//вывод информации о полях
 {
 	cout << "Доступные поля :" << endl;
 	cout << "1 - Название программы" << endl;
@@ -500,7 +504,7 @@ void menu::print_field()
 	cout << "6 - Длительность программы" << endl;
 	cout << "7 - Рейтинг программы" << endl;
 }
-void menu::print_field_for_min()
+void menu::print_field_for_min()//поля для макс или мин
 {
 	cout << "Доступные поля :" << endl;
 	cout << "1 - Канал" << endl;
